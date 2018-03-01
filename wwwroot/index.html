@@ -5,8 +5,42 @@
 </head>
 
 <body>
-    <iframe src="http://localhost:5000/html?url=http://google.com"></iframe>
-    <!-- <iframe src="http://localhost:5000/api/redirect"></iframe> -->
+    <iframe src="http://localhost:5000/html?url=http://www.google.com"></iframe>
+    <iframe id="frame"></iframe>
 </body>
+
+<script type="text/javascript">
+
+    var url = "https://www.google.com";
+    var corsAnywhere = "https://cors-anywhere.herokuapp.com"
+
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', corsAnywhere + '/' + url, true);
+    xhr.responseType = "document";
+
+    xhr.onload = function () {
+        if (this.status == 200) {
+
+            var frame = document.getElementById("frame");
+            var response = this.response;
+
+            for (var i = 0; i < response.images.length; ++i) {
+                var element = response.images.item(i);
+                element.src = element.src.replace(corsAnywhere, url);
+                element.srcset = element.srcset.split(",").map(x => {
+                    let trimmed = x.trim();
+                    if (trimmed.length > 0 && trimmed[0] === "/") {
+                        return url + trimmed
+                    } else {
+                        return trimmed;
+                    }
+                }).join(",");
+            }
+            frame.srcdoc = response.documentElement.outerHTML;
+        }
+    };
+
+    xhr.send();
+</script>
 
 </html>
