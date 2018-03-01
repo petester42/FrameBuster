@@ -1,0 +1,8 @@
+body {
+  display: flex;
+  flex-direction: column;
+}
+
+iframe {
+  flex: 1;
+}
